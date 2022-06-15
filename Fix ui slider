@@ -978,36 +978,56 @@ end)
 
 --esp
 
-Tab6Section:NewButton("Esp", "esp", function()
-    function CreateSG(name,parent,face)
-local SurfaceGui = Instance.new("SurfaceGui",parent)
-SurfaceGui.Parent = parent
-SurfaceGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-SurfaceGui.Face = Enum.NormalId[face]
-SurfaceGui.LightInfluence = 0
-SurfaceGui.ResetOnSpawn = false
-SurfaceGui.Name = name
-SurfaceGui.AlwaysOnTop = true
-local Frame = Instance.new("Frame",SurfaceGui)
-Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 153)
-Frame.Size = UDim2.new(1,0,1,0)
-end
-while wait(1) do
-for i,v in pairs (game:GetService("Players"):GetPlayers()) do
-if v ~= game:GetService("Players").LocalPlayer and v.Character ~= nil and
-v.Character:FindFirstChild("LowerTorso") and v.Character.LowerTorso:FindFirstChild("cham") == nil then
-for i,v in pairs (v.Character:GetChildren()) do
-if v:IsA("MeshPart") or v.Name == "LowerTorso" then
-CreateSG("cham",v,"Back")
-CreateSG("cham",v,"Front")
-CreateSG("cham",v,"Left")
-CreateSG("cham",v,"Right")
-CreateSG("cham",v,"Right")
-CreateSG("cham",v,"Top")
-CreateSG("cham",v,"Bottom")
-end
-end
-end
-end
-end
+Section:NewButton("ButtonText", "ButtonInfo", function()
+    local thing 
+         local espval = v 
+         if espval then 
+             spawn(function() 
+                 ESPFolder = Instance.new("Folder") 
+                 ESPFolder.Name = "ESPFolder" 
+                 ESPFolder.Parent = ScreenGuitwo 
+                 repeat 
+                     task.wait() 
+                     if (not espval) then break end 
+                     for i,plr in pairs(game.Players:GetChildren()) do 
+                         if ESPFolder:FindFirstChild(plr.Name) then 
+                             thing = ESPFolder[plr.Name] 
+                             thing.Visible = false 
+                         else 
+                             thing = Instance.new("ImageLabel") 
+                             thing.BackgroundTransparency = 1 
+                             thing.BorderSizePixel = 0 
+                             thing.Image = getcustomassetthingylol("rektsky/assets/esppic.png") 
+                             thing.Visible = false 
+                             thing.Name = plr.Name 
+                             thing.Parent = ESPFolder 
+                             thing.Size = UDim2.new(0, 256, 0, 256) 
+                         end 
+                          
+                         if isAlive(plr) and plr ~= lplr and plr.Team ~= tostring(lplr.Team) then 
+                             local rootPos, rootVis = cam:WorldToViewportPoint(plr.Character.HumanoidRootPart.Position) 
+                             local rootSize = (plr.Character.HumanoidRootPart.Size.X * 1200) * (cam.ViewportSize.X / 1920) 
+                             local headPos, headVis = cam:WorldToViewportPoint(plr.Character.HumanoidRootPart.Position + Vector3.new(0, 1 + (plr.Character.Humanoid.RigType == Enum.HumanoidRigType.R6 and 2 or plr.Character.Humanoid.HipHeight), 0)) 
+                             local legPos, legVis = cam:WorldToViewportPoint(plr.Character.HumanoidRootPart.Position - Vector3.new(0, 1 + (plr.Character.Humanoid.RigType == Enum.HumanoidRigType.R6 and 2 or plr.Character.Humanoid.HipHeight), 0)) 
+                             rootPos = rootPos 
+                             if rootVis then 
+                                 thing.Visible = rootVis 
+                                 thing.Size = UDim2.new(0, rootSize / rootPos.Z, 0, headPos.Y - legPos.Y) 
+                                 thing.Position = UDim2.new(0, rootPos.X - thing.Size.X.Offset / 2, 0, (rootPos.Y - thing.Size.Y.Offset / 2) - 36) 
+                             end 
+                         end 
+                     end 
+                 until (not espval) 
+             end) 
+             game.Players.PlayerRemoving:connect(function(plr) 
+                 if ESPFolder:FindFirstChild(plr.Name) then 
+                     ESPFolder[plr.Name]:Remove() 
+                 end 
+             end) 
+         else 
+             ESPFolder:remove() 
+             return 
+         end 
+     end 
+ }) 
 end)
