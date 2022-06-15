@@ -970,3 +970,8 @@ Tab1Section:NewSlider("Range 18-1", "", 18, 1, function(val) -- 500 (MaxValue) |
                  antivoidp.Transparency = 1 - (val / 100) 
          end 
  end) 
+
+--fov
+
+Tab6Section:NewTextBox("Set FOV","Max FOV number 120", function(txt) game.Workspace.CurrentCamera.FieldOfView = txt
+end)
