@@ -978,7 +978,7 @@ end)
 
 --esp
 
-Section:NewButton("ButtonText", "ButtonInfo", function()
+Section:NewButton("ESP", "ESP", function()
     local thing 
          local espval = v 
          if espval then 
