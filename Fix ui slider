@@ -1,3 +1,4 @@
+
 local NeonWaterMark = Instance.new("ScreenGui") 
  local TextLabel = Instance.new("TextButton") 
  local UIGradient = Instance.new("UIGradient") 
@@ -38,7 +39,7 @@ local NeonWaterMark = Instance.new("ScreenGui")
  TextLabel_2.Position = UDim2.new(-0.000772226602, 0, 0.67410934, 0) 
  TextLabel_2.Size = UDim2.new(1, 0, 1, 0) 
  TextLabel_2.Font = Enum.Font.GothamBold 
- TextLabel_2.Text = "v1" 
+ TextLabel_2.Text = "v2" 
  TextLabel_2.TextColor3 = Color3.fromRGB(255, 255, 255) 
  TextLabel_2.TextScaled = true 
  TextLabel_2.TextSize = 24.000 
@@ -69,8 +70,8 @@ local NeonWaterMark = Instance.new("ScreenGui")
  }) 
  wait(1) 
  game.StarterGui:SetCore("SendNotification", { 
-     Title = "Neon hub v1"; 
-     Text = "more coming soon"; -- what the text says (ofc) 
+     Title = "Neon v2"; 
+     Text = "little bit skiddedðŸ’€ðŸ’€"; -- what the text says (ofc) 
      Duration = 30; 
  }) 
   
@@ -386,7 +387,7 @@ local NeonWaterMark = Instance.new("ScreenGui")
   
   
  local kavoUi = loadstring(game:HttpGet("https://raw.githubusercontent.com/PrototypeHub/SytroNight4ROBLOX/main/libraries/kavo.lua"))() 
- local window = kavoUi.CreateLib("Neon hub v1", "DarkTheme") 
+ local window = kavoUi.CreateLib("Neon hub v2", "Serpent") 
  local entity = loadstring(game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/Libraries/entityHandler.lua", true))() 
   
  do 
@@ -451,6 +452,10 @@ local Tab5Section =Tab5:NewSection("helper-unknown | Neon admin")
 local Tab6 = window:NewTab("world")
 
 local Tab6Section = Tab6:NewSection("World")
+
+local Tab7 = window:NewTab("others")
+
+local Tab7Section = Tab7:NewSection("utility")
 
 --SCRIPTS
 
@@ -1309,9 +1314,172 @@ end)
     end
 end)
 
---keybind
+--fullbright
 
-Tab6Section:NewKeybind("rightShift", "open close", Enum.KeyCode.RightShift, function()
-	Library:ToggleUI()
+Tab7Section:NewToggle("fullbright", "gives you special eye", function(state)
+    if state then
+        local Light = game:GetService("Lighting")
+
+function dofullbright()
+Light.Ambient = Color3.new(1, 1, 1)
+Light.ColorShift_Bottom = Color3.new(1, 1, 1)
+Light.ColorShift_Top = Color3.new(1, 1, 1)
+end
+
+dofullbright()
+
+Light.LightingChanged:Connect(dofullbright)local Light = game:GetService("Lighting")
+
+function dofullbright()
+Light.Ambient = Color3.new(1, 1, 1)
+Light.ColorShift_Bottom = Color3.new(1, 1, 1)
+Light.ColorShift_Top = Color3.new(1, 1, 1)
+end
+
+dofullbright()
+
+Light.LightingChanged:Connect(dofullbright)
+    else
+        print("Toggle Off")
+    end
+end)
+
+--anti cheat
+
+Tab7Section:NewToggle("Anti cheat", "removes some anticheats", function(state)
+    if state then
+        shared.enabled = w
+game:GetService("RunService").heartbeat:connect(function()
+if not shared.enabled then return end
+game:GetService("ReplicatedStorage").rbxts_include.node_modules.net.out._NetManaged.GroundHit:FireServer(workspace.Map.Blocks,1645488277.345853)
+wait()
+end)
+    else
+        print("Toggle Off")
+    end
+end)
+
+--hitbox
+
+Tab7Section:NewToggle("hitbox", "hitbox players", function(state)
+    if state then
+        _G.HeadSize = 23
+_G.Disabled = true
+
+game:GetService('RunService').RenderStepped:connect(function()
+if _G.Disabled then
+for i,v in next, game:GetService('Players'):GetPlayers() do
+if v.Name ~= game:GetService('Players').LocalPlayer.Name then
+pcall(function()
+v.Character.HumanoidRootPart.Size = Vector3.new(_G.HeadSize,_G.HeadSize,_G.HeadSize)
+v.Character.HumanoidRootPart.Transparency = 0.8
+v.Character.HumanoidRootPart.BrickColor = BrickColor.new("Really blue")
+v.Character.HumanoidRootPart.Material = "Plastic"
+v.Character.HumanoidRootPart.CanCollide = false
+end)
+end
+end
+end
+end)
+    else
+        print("Toggle Off")
+    end
+end)
+
+--bednuker v2 fix
+
+Tab7Section:NewToggle("bednuker fix", "ToggleInfo", function(state)
+    if state then
+        function getclosebed()
+    for i,v in pairs(game:GetService("Workspace").Map.Blocks:GetChildren()) do
+        if v.Name == "bed" and v:FindFirstChild("Covers") then
+            local magcheck = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - v.Covers.Position).Magnitude
+            if magcheck <= 45 then
+                return v
+            end
+        end
+    end
+end
+
+local added
+function getanumber()
+    added = 0
+    for i,v in pairs(game.Workspace.Map.Blocks:GetChildren()) do
+        local target = getclosebed()
+        if target ~= nil and v.Position then
+            if target.Position.X == v.Position.X and target.Position.Z == v.Position.Z then
+                if v.Position.Y > target.Position.Y and v.Position.Y - target.Position.Y < 16.5 then
+                    added = added + 1
+                end
+                if v.Position.Y < target.Position.Y and v.Position.Y - target.Position.Y < 16.5 then
+                    added = added - 1
+                end
+            end
+        end
+    end
+    return added
+end
+
+function hitblock(X,Y,Z)
+    local args = {
+        [1] = {
+            ["blockRef"] = {
+                ["blockPosition"] = Vector3.new(X/3,Y/3,Z/3)
+            },
+            ["hitPosition"] = Vector3.new(X/3,Y/3,Z/3),
+            ["hitNormal"] = Vector3.new(X/3,Y/3,Z/3)
+        }
+    }
+
+    game:GetService("ReplicatedStorage").rbxts_include.node_modules.net.out._NetManaged.DamageBlock:InvokeServer(unpack(args))
+end
+
+local function getItem(itemName)
+	for i5, v5 in pairs(getinv(lplr)["items"]) do
+		if v5["itemType"] == itemName then
+			return v5, i5
+		end
+	end
+	return nil
+end
+    else
+        print("Toggle Off")
+    end
+end)
+
+--chat spammer
+
+Tab7Section:NewToggle("chat spammer", "ayo", function(state)
+    if state then        
+while true do wait(0) 
+
+local A_1 = "Neon on top" local A_2 = "All" 
+local Event = game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest Event:FireServer(A_1, A_2) end
+    else
+        print("Toggle Off")
+    end
+end)
+
+--idk if works
+
+Tab7Section:NewToggle("CLONE", "iK", function(state)
+    if state then
+        spawn(function() 
+                     isclone = true 
+                     clonemake() 
+                     speedd = 200 
+                     connectionnnn = game:GetService("RunService").Heartbeat:connect(function() 
+                         local velo = clone.Humanoid.MoveDirection * speedd 
+                         clone.HumanoidRootPart.Velocity = Vector3.new(velo.x, lplr.Character.HumanoidRootPart.Velocity.y, velo.z) 
+                     end) 
+                 end) 
+    else
+        clone:remove() 
+                 lplr.Character = realchar 
+                 realchar.Humanoid:ChangeState("Dead") 
+                 isclone = false 
+                 connectionnnn:Disconnect() 
+                 return
+    end
 end)
 
