@@ -39,7 +39,7 @@ local NeonWaterMark = Instance.new("ScreenGui")
  TextLabel_2.Position = UDim2.new(-0.000772226602, 0, 0.67410934, 0) 
  TextLabel_2.Size = UDim2.new(1, 0, 1, 0) 
  TextLabel_2.Font = Enum.Font.GothamBold 
- TextLabel_2.Text = "v2" 
+ TextLabel_2.Text = "v3" 
  TextLabel_2.TextColor3 = Color3.fromRGB(255, 255, 255) 
  TextLabel_2.TextScaled = true 
  TextLabel_2.TextSize = 24.000 
@@ -63,17 +63,7 @@ local NeonWaterMark = Instance.new("ScreenGui")
      vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame) 
  end) 
    
- game.StarterGui:SetCore("SendNotification", { 
-     Title = "Credits too"; 
-     Text = "Made by LUNAR_XD"; -- what the text says (ofc) 
-     Duration = 30; 
- }) 
- wait(1) 
- game.StarterGui:SetCore("SendNotification", { 
-     Title = "Neon v2"; 
-     Text = "little bit skiddedðŸ’€ðŸ’€"; -- what the text says (ofc) 
-     Duration = 30; 
- }) 
+ 
   
   
   
@@ -387,7 +377,7 @@ local NeonWaterMark = Instance.new("ScreenGui")
   
   
  local kavoUi = loadstring(game:HttpGet("https://raw.githubusercontent.com/PrototypeHub/SytroNight4ROBLOX/main/libraries/kavo.lua"))() 
- local window = kavoUi.CreateLib("Neon hub v2", "Serpent") 
+ local window = kavoUi.CreateLib("Neon hub v3", "Serpent") 
  local entity = loadstring(game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/Libraries/entityHandler.lua", true))() 
   
  do 
@@ -1483,3 +1473,176 @@ Tab7Section:NewToggle("CLONE", "iK", function(state)
     end
 end)
 
+--auto report
+
+Tab7Section:NewToggle("auto report", "report player", function(state)
+    if state then
+        setfflag("AbuseReportScreenshotPercentage", 0)
+setfflag("DFFlagAbuseReportScreenshot", "False") 
+
+local Default = {
+	Advertise = true;
+	Safe = false;
+	Webhook = "";
+	
+	Words = {
+	    Blacklist = "https://raw.githubusercontent.com/CF-Trail/Auto-Report/main/words/blacklisted.lua";
+	    Whitelist = "https://raw.githubusercontent.com/CF-Trail/Auto-Report/main/words/whitelisted.lua";
+	};
+}
+
+if not getgenv().autoreport then
+	getgenv().autoreport = Default
+end;
+
+for _,v in next, Default do
+	if not getgenv().autoreport[_] then getgenv().autoreport[_] = v end
+end
+
+if (getgenv()).autoreport.library == nil then
+	(getgenv()).autoreport.library = (loadstring(game:HttpGet("https://raw.githubusercontent.com/shlexware/Orion/main/source")))();
+end;
+
+local messages = {
+	blacklisted = loadstring(game:HttpGet(getgenv().autoreport.Words.Blacklist))(),
+	whitelisted = loadstring(game:HttpGet(getgenv().autoreport.Words.Whitelist))()
+}
+
+local lib = {};
+local success, error = pcall(function()
+	function lib:notify(title, text)
+		(getgenv()).autoreport.library:MakeNotification({
+			Name = title,
+			Content = text,
+			Time = 3
+		});
+	end;
+	function lib:report(player, thing, reason, offensive)
+
+		for word, _ in next, messages.whitelisted do
+			if string.match(getgenv().autoreport.Message, word) then
+				return false;
+			end;
+		end;
+		if (getgenv()).autoreport.Webhook == "" or (getgenv()).autoreport.Webhook == nil then
+			lib:notify("Report", "Reported " .. player.Name .. " because of \"" .. (getgenv()).autoreport.Message .. "\"");
+		else
+				local data = 
+				{
+					["embeds"] = {{
+						["title"] = "**" .. gameName .. "**",
+						["description"] = "Auto-reported a player",
+						["type"] = "rich",
+						["color"] = tonumber(0x00aff4),
+						["url"] = "https://www.roblox.com/games/" .. game.PlaceId,
+						["fields"] = {
+							{
+								["name"] = "Name",
+								["value"] = "[" .. player.Name .. "](https://www.roblox.com/users/" .. player.UserId .. ")",
+								["inline"] = true
+							},
+							{
+								["name"] = "Message",
+								["value"] = getgenv().autoreport.Message,
+								["inline"] = true
+							},
+							{
+								["name"] = "Offensive part",
+								["value"] = offensive,
+								["inline"] = true
+							}
+						},
+						["footer"] = {
+							["text"] = "\nIf you think this is a mistake, contact snnwer#1349 or .gg#1780"
+						},
+						["author"] = {
+							["name"] = "Auto Report"
+						}
+					}}
+				}
+			local newdata = (game:GetService("HttpService")):JSONEncode(data);
+			local headers = {
+				["content-type"] = "application/json"
+			};
+			request = http_request or request or HttpPost or syn.request;
+			local abcdef = {
+				Url = (getgenv()).autoreport.Webhook,
+				Body = newdata,
+				Method = "POST",
+				Headers = headers
+			};
+			request(abcdef);
+		end;
+
+		for i = 1, (getgenv().autoreport.Safe and math.random(1,2) or math.random(5, 12)) do
+			wait(math.random(1, 15) / 10)
+			game.Players:ReportAbuse(player, thing, reason)
+		end;
+	end;
+
+	function handler(player, msg)
+		local thing, reason;
+		msg = string.lower(msg);
+		for i, v in next, messages.blacklisted do
+			if string.match(msg, i) then
+				thing, reason, offensive = v[1], v[2], i;
+				if (getgenv()).autoreport.Advertise == true then (game:GetService("ReplicatedStorage")).DefaultChatSystemChatEvents.SayMessageRequest:FireServer("/w " .. player.Name .. " you got mass reported by .gg/outliershub", "All"); end;
+			end;
+		end;
+		if thing and reason and offensive then
+			lib:report(player, thing, reason, offensive);
+		end;
+	end;
+end);
+
+if not success then
+	error(error);
+end;
+
+for i, plr in pairs(game.Players:GetPlayers()) do
+	if plr ~= game.Players.LocalPlayer then
+		plr.Chatted:Connect(function(msg)
+			(getgenv()).autoreport.Message = msg;
+			handler(plr, msg);
+		end);
+	end;
+end;
+game.Players.PlayerAdded:Connect(function(plr)
+	if plr ~= game.Players.LocalPlayer then
+		plr.Chatted:Connect(function(msg)
+			(getgenv()).autoreport.Message = msg;
+			handler(plr, msg);
+		end);
+	end;
+end);
+
+(getgenv()).autoreport.library:MakeNotification({
+	Name = "auto report load!",
+	Content = "credits to engoo",
+	Time = 8
+});
+
+(getgenv()).autoreport.library:MakeNotification({
+	Name = "Join are Server for updates",
+	Content = "credits to LUNAAR_XD",
+	Time = 8
+});
+    else
+        print("Toggle Off")
+    end
+end)
+
+--sprint
+
+Tab1Section:NewToggle("Sprint", "Automatically on your sprint", function(state) 
+         if state then 
+                 BindToStepped("Sprint", 1, function() 
+                         if SprintCont.sprinting == false then 
+                                 SprintCont:startSprinting() 
+                         end 
+                 end) 
+         else 
+                 UnbindFromStepped("Sprint") 
+                 SprintCont:stopSprinting() 
+         end 
+ end)  
